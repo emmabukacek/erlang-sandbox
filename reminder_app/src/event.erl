@@ -4,6 +4,7 @@
                 name = "",
                 to_go = 0}).
 
+
 cancel(Pid) ->
   %% Monitor in case the process is dead
   Ref = erlang:monitor(process, Pid),
@@ -16,10 +17,12 @@ cancel(Pid) ->
       ok
   end.
 
+
 init(Server, EventName, DateTime) ->
   loop(#state{server = Server,
               name = EventName,
               to_go = time_to_go(DateTime)}).
+
 
 %% Loop uses a list for times in order to go around the ~49 days limit
 %% on timeouts.
@@ -36,16 +39,20 @@ loop(S = #state{server = Server, to_go = [T|Next]}) ->
     end
   end.
 
+
 %% Used to overcome the timeout limitation in Erlang.
 normalize(N) ->
   Limit = 49 * 24 * 60 * 60,
   [N rem Limit | lists:duplicate(N div Limit, Limit)].
 
+
 start(EventName, Delay) ->
   spawn(?MODULE, init, [self(), EventName, Delay]).
 
+
 start_link(EventName, Delay) ->
   spawn_link(?MODULE, init, [self(), EventName, Delay]).
+
 
 time_to_go(TimeOut = {{_,_,_}, {_,_,_}}) ->
   Now = calendar:local_time(),
