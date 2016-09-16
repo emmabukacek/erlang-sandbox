@@ -61,7 +61,7 @@ loop(S = #state{}) ->
                                            description=Description,
                                            pid=EventPid,
                                            timeout=TimeOut},
-                                    #state.events),
+                                    S#state.events),
           Pid ! {MsgRef, ok},
           loop(S#state{events=NewEvents});
         false ->
